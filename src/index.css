@@ -7,32 +7,82 @@
 }
 
 body {
-  background-color: #1C1B19;
-  color: #EDE8E0;
-  font-family: 'Work Sans', sans-serif;
+  background-color: #14170F;
+  color: #F1EAD6;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Signature element: rotating barber-pole stripe, used once as a section divider */
+::selection {
+  background: #C08A45;
+  color: #14170F;
+}
+
+:focus-visible {
+  outline: 2px solid #C08A45;
+  outline-offset: 2px;
+}
+
+/* ---- Ticket / talon motif -------------------------------------------- */
+.ticket {
+  position: relative;
+  background: #EAE2C8;
+  color: #14170F;
+}
+
+.ticket::before,
+.ticket::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #14170F;
+  border-radius: 999px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.ticket::before { left: -9px; }
+.ticket::after { right: -9px; }
+
+.ticket-perf {
+  border-top: 2px dashed #B7AC85;
+}
+
+/* Rubber-stamp badge, slightly rotated like an ink stamp */
+.stamp {
+  display: inline-block;
+  transform: rotate(-6deg);
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  padding: 2px 10px;
+  letter-spacing: 0.18em;
+}
+
+/* Subtle dotted grain texture used behind hero / dark sections */
+.grain {
+  background-image: radial-gradient(circle at 1px 1px, rgba(241,234,214,0.06) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+/* Barber-pole accent stripe, used once as a section divider */
 .pole-divider {
-  height: 6px;
+  height: 5px;
   border-radius: 999px;
   background: repeating-linear-gradient(
     -45deg,
-    #C9A227 0px,
-    #C9A227 14px,
-    #8B3A2F 14px,
-    #8B3A2F 28px,
-    #EDE8E0 28px,
-    #EDE8E0 42px
+    #C08A45 0px,
+    #C08A45 12px,
+    #B0362A 12px,
+    #B0362A 24px,
+    #F1EAD6 24px,
+    #F1EAD6 36px
   );
   background-size: 200% 100%;
-  animation: pole-scroll 6s linear infinite;
+  animation: pole-scroll 7s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pole-divider {
-    animation: none;
-  }
+  .pole-divider { animation: none; }
 }
 
 @keyframes pole-scroll {
@@ -40,7 +90,12 @@ body {
   to { background-position: 100% 0; }
 }
 
-:focus-visible {
-  outline: 2px solid #C9A227;
-  outline-offset: 2px;
+/* Countdown pulse for the payment timer */
+.timer-pulse {
+  animation: timer-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
 }
