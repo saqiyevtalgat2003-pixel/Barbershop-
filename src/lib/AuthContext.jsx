@@ -1,30 +1,56 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { registerUser, verifyLogin, updateUser } from './usersStore'
 
 const AuthContext = createContext(null)
+const SESSION_KEY = 'barbershop_session_user_id'
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('barbershop_user')
-    if (saved) setUser(JSON.parse(saved))
+    const savedId = localStorage.getItem(SESSION_KEY)
+    if (savedId) {
+      const raw = localStorage.getItem('barbershop_users')
+      const users = raw ? JSON.parse(raw) : []
+      const found = users.find((u) => u.id === savedId)
+      if (found) setUser(found)
+    }
+    setReady(true)
   }, [])
 
-  // Мок логин — кейін Supabase Auth-пен ауыстырасың (supabase.auth.signInWithPassword)
-  function login({ name, phone, email }) {
-    const newUser = { name, phone, email }
-    localStorage.setItem('barbershop_user', JSON.stringify(newUser))
-    setUser(newUser)
+  function persistSession(u) {
+    localStorage.setItem(SESSION_KEY, u.id)
+    setUser(u)
+  }
+
+  // Тіркелу — аты-жөні, телефон, email, құпия сөз бәрі міндетті
+  function register({ fullName, phone, email, password }) {
+    const newUser = registerUser({ fullName, phone, email, password })
+    persistSession(newUser)
     return newUser
   }
 
+  // Кіру — телефон немесе email + құпия сөз арқылы
+  function login({ login, password }) {
+    const found = verifyLogin({ login, password })
+    persistSession(found)
+    return found
+  }
+
   function logout() {
-    localStorage.removeItem('barbershop_user')
+    localStorage.removeItem(SESSION_KEY)
     setUser(null)
   }
 
+  function updateProfile(patch) {
+    const updated = updateUser(user.id, patch)
+    setUser(updated)
+    return updated
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, ready, register, login, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   )
